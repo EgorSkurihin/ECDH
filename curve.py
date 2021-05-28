@@ -1,9 +1,10 @@
 from utils import *
 import random
+from sympy import isprime
 
 class EllCurve:
     def __init__(self, a, b, p):
-        if not is_prime(p):
+        if not isprime(p):
             raise ValueError(f"Module {p} is not prime number")
         self.a = a
         self.b = b
@@ -23,9 +24,9 @@ class EllCurve:
         x, y = p
         if self.is_null(p):
             return True
-        left = pow(y, 2) % self.module
-        right = (pow(x, 3)+ x*self.a + self.b) % self.module
-        return right == left
+        left = y ** 2
+        rigth = x ** 3 + x*self.a + self.b
+        return rigth % self.module == left % self.module
 
 
     def add(self, p1, p2):
@@ -80,24 +81,15 @@ class EllCurve:
             point = (x, y)
             if self.is_point_on_curve(point):
                 return point
-    
-
-    def find_minimal_point(self):
-        x = 0
-        while True:
-            right = (x ** 3 + self.a * x + self.b) % self.module
-            y = modular_sqrt(right, self.module)
-            point = (x, y)
-            if self.is_point_on_curve(point):
-                return point
-            x+=1
 
 
 if __name__ == "__main__":
-    module = 115792089210356248762697446949407573530086143415290314195533631308867097853951
-    a = 115792089210356248762697446949407573530086143415290314195533631308867097853948
-    b = 41058363725152142129326129780047268409114441015993725554835256314039467401291
-    c = EllCurve(a, b, module)
-    point = c.find_rand_point()
-    print(point)
-    print(c.is_point_on_curve(point))
+    c = EllCurve(-1, 1, 751)
+    print(f"Curve parameters: a=-1, b=1, p=751;\n")
+    p1 = (0, 1)
+    print(f"Point1: {p1}")
+    p2 = c.find_rand_point()
+    print(f"Random point of curve (Point2) = {p2}")
+    print(f"Point1 + Point2 = {p1} + {p2} = {c.add(p1,p2)}")
+    print(f"10 * {p1} = {c.multiply(10, p1)}")
+
